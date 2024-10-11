@@ -5,7 +5,7 @@ pipeline {
         FILENAME = 'oreoProgram'
         BACKUP_SUFFIX = '_Version_'
         HOME_DIR = sh(script: 'echo $HOME', returnStdout: true).trim()  // Get the home directory of the Jenkins agent user
-        CURRENT_FILENAME = FILENAME  // Variable to track the current filename
+        CURRENT_FILENAME = FILENAME  // Variable to track the current filename.....
     }
 
     stages {
