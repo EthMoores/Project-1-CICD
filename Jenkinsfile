@@ -40,8 +40,7 @@ pipeline {
                         echo "Copied ${CURRENT_FILENAME} to the home folder (${HOME_DIR})"
                         echo " "
                         echo " "
-                        echo " "
-                        echo " "
+                        
                     } else {
                         echo "File ${FILENAME} does not exist, pulling from Git repository."
                         // Pull the file from the Git repository if it doesn't exist..
