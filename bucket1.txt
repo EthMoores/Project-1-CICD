@@ -1,10 +1,11 @@
+Failed deployment code
+
 pipeline {
     agent any
 
     environment {
         FILENAME = 'oreoProgram'
         BACKUP_SUFFIX = '_Version_'
-        HOME_DIR = sh(script: 'echo $HOME', returnStdout: true).trim()  // Get the home directory of the Jenkins agent user
     }
 
     stages {
@@ -20,18 +21,10 @@ pipeline {
                         // Rename the existing file with the new version number
                         sh "mv ${FILENAME} ${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
                         echo "Existing file renamed to ${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
-
-                        // Copy the newly renamed file to the home directory
-                        sh "cp ${FILENAME}${BACKUP_SUFFIX}${versionNumber} ${HOME_DIR}/"
-                        echo "Copied ${FILENAME}${BACKUP_SUFFIX}${versionNumber} to the home folder (${HOME_DIR})"
                     } else {
                         // Pull the file from the Git repository if it doesn't exist..
                         sh "git checkout ${FILENAME}"
                         echo "File ${FILENAME} pulled from the Git repository"
-
-                        // Copy the pulled file to the home directory
-                        sh "cp ${FILENAME} ${HOME_DIR}/"
-                        echo "Copied ${FILENAME} to the home folder (${HOME_DIR})"
                     }
                 }
             }
@@ -39,27 +32,15 @@ pipeline {
 
         stage('Make Executable') {
             steps {
-                script {
-                    // Make sure the file exists before attempting to change permissions
-                    def fileExists = sh(script: "if [ -f ${FILENAME} ]; then echo 'yes'; else echo 'no'; fi", returnStdout: true).trim()
-                    if (fileExists == 'yes') {
-                        try {
-                            // Attempt to make the file executable
-                            sh "chmod +x ${FILENAME}"
-                            echo "${FILENAME} is now executable"
-                        } catch (Exception e) {
-                            error "Failed to make ${FILENAME} executable. Check file permissions."
-                        }
-                    } else {
-                        error "File ${FILENAME} does not exist. Cannot make it executable."
-                    }
-                }
+                // Make the oreoProgram file executable
+                sh "chmod +x ${FILENAME}"
+                echo "${FILENAME} is now executable"
             }
         }
 
         stage('Archive Script') {
             steps {
-                // Archive the oreoProgram as a build artifact.. 
+                // Archive the oreoProgram as a build artifact..
                 archiveArtifacts artifacts: "${FILENAME}", allowEmptyArchive: false
             }
         }
@@ -74,3 +55,4 @@ pipeline {
         }
     }
 }
+
