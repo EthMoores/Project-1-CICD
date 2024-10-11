@@ -35,7 +35,7 @@ pipeline {
                         sh "cp ${CURRENT_FILENAME} ${HOME_DIR}/"
                         echo "Copied ${CURRENT_FILENAME} to the home folder (${HOME_DIR})"
                     } else {
-                        echo "File ${FILENAME} does not exist, pulling from Git repository."
+                        echo "File ${FILENAME} does not exist, pulling from Git repository......"
                         // Pull the file from the Git repository if it doesn't exist..
                         sh "git checkout ${FILENAME}"
 
