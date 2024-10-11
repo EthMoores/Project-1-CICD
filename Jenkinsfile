@@ -39,7 +39,7 @@ pipeline {
                         // Pull the file from the Git repository if it doesn't exist..
                         sh "git checkout ${FILENAME}"
 
-                        // Verify that the file was pulled correctly
+                        // Verify that the file was pulled correctly https://github.com/EthMoores/Project-1-CICD.git
                         sh 'ls -la'
 
                         // Check if the file exists after the pull
