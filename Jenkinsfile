@@ -11,6 +11,12 @@ pipeline {
         stage('Check for Existing File') {
             steps {
                 script {
+                    // Print the current directory to verify the working directory
+                    sh 'pwd'
+
+                    // List files in the current directory to verify if the file is present
+                    sh 'ls -la'
+
                     // Check if the file exists on the deployment machine...
                     def fileExists = sh(script: "if [ -f ${FILENAME} ]; then echo 'yes'; else echo 'no'; fi", returnStdout: true).trim()
                     if (fileExists == 'yes') {
@@ -22,31 +28,36 @@ pipeline {
                         echo "Existing file renamed to ${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
                         echo "......., \n"
                         echo "......., \n"
-                        echo "......., \n"
 
                         // Copy the newly renamed file to the home directory
                         sh "cp ${FILENAME}${BACKUP_SUFFIX}${versionNumber} ${HOME_DIR}/"
                         echo "Copied ${FILENAME}${BACKUP_SUFFIX}${versionNumber} to the home folder (${HOME_DIR})"
                         echo "......., \n"
                         echo "......., \n"
-                        echo "......., \n"
-                        echo "......., \n"
                     } else {
+                        echo "File ${FILENAME} does not exist, pulling from Git repository."
                         // Pull the file from the Git repository if it doesn't exist..
                         sh "git checkout ${FILENAME}"
-                        echo "File ${FILENAME} pulled from the Git repository"
-                        echo "......., \n"
-                        echo "......., \n"
-                        echo "......., \n"
-
-                        // Copy the pulled file to the home directory
-                        sh "cp ${FILENAME} ${HOME_DIR}/"
-                        echo "Copied ${FILENAME} to the home folder (${HOME_DIR})"
-                        echo "......., \n"
-                        echo "......., \n"
                         echo "......., \n"
                         echo "......., \n"
 
+                        // Verify that the file was pulled correctly
+                        sh 'ls -la'
+
+                        // Check if the file exists after the pull
+                        def fileExistsAfterPull = sh(script: "if [ -f ${FILENAME} ]; then echo 'yes'; else echo 'no'; fi", returnStdout: true).trim()
+                        if (fileExistsAfterPull == 'yes') {
+                            echo "File ${FILENAME} pulled successfully from the Git repository"
+                            echo "......., \n"
+                            echo "......., \n"
+                            // Copy the pulled file to the home directory
+                            sh "cp ${FILENAME} ${HOME_DIR}/"
+                            echo "Copied ${FILENAME} to the home folder (${HOME_DIR})"
+                            echo "......., \n"
+                            echo "......., \n"
+                        } else {
+                            error "File ${FILENAME} could not be found after Git checkout. Please ensure it exists in the repository."
+                        }
                     }
                 }
             }
@@ -64,7 +75,6 @@ pipeline {
                             echo "${FILENAME} is now executable"
                             echo "......., \n"
                             echo "......., \n"
-                            echo "......., \n"
                         } catch (Exception e) {
                             error "Failed to make ${FILENAME} executable. Check file permissions."
                         }
@@ -77,7 +87,7 @@ pipeline {
 
         stage('Archive Script') {
             steps {
-                // Archive the oreoProgram as a build artifact.. 
+                // Archive the oreoProgram as a build artifact
                 archiveArtifacts artifacts: "${FILENAME}", allowEmptyArchive: false
             }
         }
