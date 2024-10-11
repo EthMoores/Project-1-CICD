@@ -119,6 +119,7 @@ pipeline {
         failure {
             echo 'Pipeline failed.'
             echo " "
+            echo " "
         }
     }
 }
