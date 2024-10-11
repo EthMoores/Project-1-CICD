@@ -18,7 +18,7 @@ pipeline {
                     // List files in the current directory to verify if the file is present
                     sh 'ls -la'
 
-                    // Check if the file exists on the deployment machine........
+                    // Check if the file exists on the deployment machine...
                     def fileExists = sh(script: "if [ -f ${FILENAME} ]; then echo 'yes'; else echo 'no'; fi", returnStdout: true).trim()
                     if (fileExists == 'yes') {
                         // Get the current version number by counting existing backup files
@@ -27,10 +27,6 @@ pipeline {
                         // Rename the existing file with the new version number
                         sh "mv ${FILENAME} ${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
                         echo "Existing file renamed to ${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
-                        echo " "
-                        echo " "
-                        echo " "
-                        echo " "
 
                         // Update the CURRENT_FILENAME to reflect the renamed file
                         CURRENT_FILENAME = "${FILENAME}${BACKUP_SUFFIX}${versionNumber}"
@@ -38,9 +34,6 @@ pipeline {
                         // Copy the newly renamed file to the home directory
                         sh "cp ${CURRENT_FILENAME} ${HOME_DIR}/"
                         echo "Copied ${CURRENT_FILENAME} to the home folder (${HOME_DIR})"
-                        echo " "
-                        echo " "
-                        
                     } else {
                         echo "File ${FILENAME} does not exist, pulling from Git repository."
                         // Pull the file from the Git repository if it doesn't exist..
@@ -53,20 +46,12 @@ pipeline {
                         def fileExistsAfterPull = sh(script: "if [ -f ${FILENAME} ]; then echo 'yes'; else echo 'no'; fi", returnStdout: true).trim()
                         if (fileExistsAfterPull == 'yes') {
                             echo "File ${FILENAME} pulled successfully from the Git repository"
-                            echo " "
-                            echo " "
-                            echo " "
-                            echo " "
                             // Use the original filename since no renaming has occurred yet
                             CURRENT_FILENAME = FILENAME
 
                             // Copy the pulled file to the home directory
                             sh "cp ${CURRENT_FILENAME} ${HOME_DIR}/"
                             echo "Copied ${CURRENT_FILENAME} to the home folder (${HOME_DIR})"
-                            echo " "
-                            echo " "
-                            echo " "
-                            echo " "
                         } else {
                             error "File ${FILENAME} could not be found after Git checkout. Please ensure it exists in the repository."
                         }
@@ -85,10 +70,6 @@ pipeline {
                             // Attempt to make the file executable
                             sh "chmod +x ${CURRENT_FILENAME}"
                             echo "${CURRENT_FILENAME} is now executable"
-                            echo " "
-                            echo " "
-                            echo " "
-                            echo " "
                         } catch (Exception e) {
                             error "Failed to make ${CURRENT_FILENAME} executable. Check file permissions."
                         }
@@ -110,15 +91,9 @@ pipeline {
     post {
         success {
             echo 'Pipeline completed successfully!'
-            echo " "
-            echo " "
-            echo " "
-            echo " "
         }
         failure {
             echo 'Pipeline failed.'
-            echo " "
-            echo " "
         }
     }
 }
