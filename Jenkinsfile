@@ -17,6 +17,7 @@ pipeline {
         stage('Archive Script') {
             steps {
                 // Archive the file as a build artifact.....
+                // Second push to see if web hook is functional 
                 archiveArtifacts artifacts: "${FILENAME}", allowEmptyArchive: false
             }
         }
